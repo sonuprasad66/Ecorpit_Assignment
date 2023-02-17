@@ -36,7 +36,7 @@ export const getProfile = (payload) => (dispatch) => {
       headers: { Authorization: `Bearer ${token}` },
     })
     .then((res) => {
-      console.log(res.data);
+      // console.log(res.data);
       return dispatch({ type: types.USER_PROFILE_SUCCESS, payload: res.data });
     })
     .catch((err) => console.log(err));

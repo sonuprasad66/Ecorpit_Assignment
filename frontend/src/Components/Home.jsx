@@ -31,6 +31,9 @@ export const Home = () => {
     navigate("/login");
   };
 
+  const handlePay = () => {
+    console.log("pay");
+  };
   return (
     <>
       <Flex
@@ -72,20 +75,35 @@ export const Home = () => {
             <Text>Mobile : {currentUser.phone_number}</Text>
             <Text>Email : {currentUser.email}</Text>
           </Box>
-          <Button
-            w="150px"
-            mt={5}
-            bg={"#4e7650"}
-            color={"white"}
-            fontWeight={600}
-            _hover={{
-              bg: "white",
-              color: "#4e7650",
-            }}
-            onClick={handleLogout}
-          >
-            Logout
-          </Button>
+
+          <Flex mt={5} gap={5}>
+            <Button
+              w="120px"
+              bg={"#4e7650"}
+              color={"white"}
+              fontWeight={600}
+              _hover={{
+                bg: "white",
+                color: "#4e7650",
+              }}
+              onClick={handleLogout}
+            >
+              Logout
+            </Button>
+            <Button
+              w="120px"
+              bg={"#4e7650"}
+              color={"white"}
+              fontWeight={600}
+              _hover={{
+                bg: "white",
+                color: "#4e7650",
+              }}
+              onClick={handlePay}
+            >
+              Pay 1
+            </Button>
+          </Flex>
         </Flex>
       </Flex>
     </>
