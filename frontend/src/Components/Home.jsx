@@ -1,5 +1,4 @@
 import {
-  Avatar,
   Box,
   Button,
   Flex,
@@ -67,12 +66,8 @@ export const Home = () => {
       body: JSON.stringify({ user_id: currentUser._id }),
     }).then((res) => res.json());
 
-    console.log(data);
-
     const options = {
       key: "rzp_test_sQ3azqtorW8osX",
-
-      // key: "rzp_test_J2fkwlHoSWVpJF",
 
       currency: data.currency,
       amount: data.amount,
