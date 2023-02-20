@@ -3,19 +3,39 @@ var jwt = require("jsonwebtoken");
 require("dotenv").config();
 const { userModel } = require("../Models/User.model");
 
+const checkUser = async (req, res) => {
+  const { username, email, phone_number } = req.body;
+  const user = await userModel.findOne({ email: email });
+
+  if (user) {
+    res.send({
+      message: "User already exists! Please Try to Login",
+      status: "info",
+    });
+  } else {
+    res.send({
+      message: "You can go to signup",
+      status: "success",
+    });
+  }
+};
+
 const userSignup = async (req, res) => {
-  const { username, email, phone_number, password, confirm_password } =
-    req.body;
+  const {
+    username,
+    email,
+    phone_number,
+    password,
+    currency,
+    amount,
+    order_id,
+    payment_id,
+  } = req.body;
 
   try {
     const user = await userModel.findOne({ email: email });
 
-    if (password != confirm_password) {
-      res.send({
-        message: "Password and conform password should be the same",
-        status: "info",
-      });
-    } else if (user) {
+    if (user) {
       res.send({
         message: "User already exists! Please Try to Login",
         status: "info",
@@ -30,6 +50,10 @@ const userSignup = async (req, res) => {
             email: email,
             phone_number: phone_number,
             password: hash_password,
+            currency: currency,
+            amount: amount,
+            order_id: order_id,
+            payment_id: payment_id,
           });
           await new_user.save();
           res.send({ message: "Signup Successfull", status: "success" });
@@ -78,6 +102,7 @@ const userProfile = async (req, res) => {
 };
 
 module.exports = {
+  checkUser,
   userSignup,
   userLogin,
   userProfile,

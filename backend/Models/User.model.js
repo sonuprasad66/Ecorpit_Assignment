@@ -6,7 +6,10 @@ const userSchema = new mongoose.Schema(
     email: { type: String, require: true },
     phone_number: { type: Number, require: true },
     password: { type: String, require: true },
-    confirm_password: { type: String, require: true },
+    currency: { type: String, require: true },
+    amount: { type: Number, require: true },
+    order_id: { type: String, require: true },
+    payment_id: { type: String, require: true },
   },
   {
     timestamps: true,

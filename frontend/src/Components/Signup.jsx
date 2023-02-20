@@ -5,7 +5,6 @@ import {
   Flex,
   FormControl,
   Heading,
-  Image,
   Input,
   InputGroup,
   InputRightElement,
@@ -19,10 +18,32 @@ import boxImage from "../assets/boxImage.svg";
 import { Link, useNavigate } from "react-router-dom";
 import { userSignup } from "../Redux/Auth/action";
 import { useDispatch, useSelector } from "react-redux";
+import { RAZORPAY, CHECK_USER } from "../Utils/api";
+import axios from "axios";
+
+const loadScript = (src) => {
+  return new Promise((resolve) => {
+    const script = document.createElement("script");
+    script.src = src;
+    script.onload = () => {
+      resolve(true);
+    };
+    script.onerror = () => {
+      resolve(false);
+    };
+    document.body.appendChild(script);
+  });
+};
 
 export const Signup = () => {
   const [showPassword, setShowPassword] = useState(false);
-  const [data, setData] = useState({});
+  const [data, setData] = useState({
+    username: "",
+    email: "",
+    phone_number: "",
+    password: "",
+    confirm_password: "",
+  });
   const dispatch = useDispatch();
   const toast = useToast();
   const navigate = useNavigate();
@@ -34,29 +55,114 @@ export const Signup = () => {
     setData({ ...data, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const displayRazorpay = async () => {
+    const res = await loadScript(
+      "https://checkout.razorpay.com/v1/checkout.js"
+    );
+
+    if (!res) {
+      alert("Razorpay SDK failed to load. Are you online?");
+      return;
+    }
+
+    const fdata = await fetch(RAZORPAY, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      mode: "cors",
+    }).then((res) => res.json());
+
+    const options = {
+      // key: "rzp_test_sQ3azqtorW8osX",
+
+      key: "rzp_test_jBBhchWsQ7daLQ",
+
+      currency: fdata.currency,
+      amount: fdata.amount,
+      order_id: fdata.id,
+      name: "Pay Money",
+      description: "Please donate us some money",
+      image: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png",
+      handler: function (response) {
+        const payload = {
+          currency: fdata.currency,
+          amount: fdata.amount,
+          order_id: fdata.id,
+          payment_id: response.razorpay_payment_id,
+        };
+
+        dispatch(userSignup({ ...data, ...payload })).then((res) => {
+          if (res.payload.status === "success") {
+            toast({
+              title: res.payload.message,
+              status: "success",
+              duration: 2000,
+              isClosable: true,
+              position: "top",
+            });
+            navigate("/login");
+          } else {
+            toast({
+              title: res.payload.message,
+              status: "error",
+              duration: 2000,
+              isClosable: true,
+              position: "top",
+            });
+          }
+        });
+      },
+    };
+    const paymentObject = new window.Razorpay(options);
+    paymentObject.open();
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    dispatch(userSignup(data)).then((res) => {
-      if (res.payload.status === "success") {
-        toast({
-          title: res.payload.message,
-          status: "success",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        });
-        navigate("/login");
-      } else {
-        toast({
-          title: res.payload.message,
-          status: "error",
-          duration: 2000,
-          isClosable: true,
-          position: "top",
-        });
-      }
-    });
+    if (
+      data.username == "" ||
+      data.email == "" ||
+      data.phone_number == "" ||
+      data.password == "" ||
+      data.confirm_password == ""
+    ) {
+      toast({
+        title: "Please filed all the fields",
+        status: "info",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
+    } else if (data.password !== data.confirm_password) {
+      toast({
+        title: "Passwords and confirm password should be same",
+        status: "info",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
+    } else {
+      await axios
+        .post(CHECK_USER, data)
+        .then((res) => {
+          console.log(res);
+          if (res.data.status === "info") {
+            toast({
+              title: res.data.message,
+              status: "info",
+              duration: 2000,
+              isClosable: true,
+              position: "top",
+            });
+            navigate("/login");
+          } else {
+            displayRazorpay();
+          }
+        })
+        .catch((err) => console.log(err));
+    }
   };
 
   return (
