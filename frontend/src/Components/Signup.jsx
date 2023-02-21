@@ -116,6 +116,11 @@ export const Signup = () => {
           }
         });
       },
+      prefill: {
+        name: data.username,
+        email: data.email,
+        contact: data.phone_number,
+      },
     };
     const paymentObject = new window.Razorpay(options);
     paymentObject.open();
@@ -123,6 +128,7 @@ export const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(data.phone_number.length);
 
     if (
       data.username == "" ||
@@ -133,6 +139,14 @@ export const Signup = () => {
     ) {
       toast({
         title: "Please filed all the fields",
+        status: "info",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
+    } else if (data.phone_number.length < 10 || data.phone_number.length > 10) {
+      toast({
+        title: "Please enter correct phone number",
         status: "info",
         duration: 2000,
         isClosable: true,
