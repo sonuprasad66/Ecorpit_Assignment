@@ -5,7 +5,9 @@ const { userModel } = require("../Models/User.model");
 
 const checkUser = async (req, res) => {
   const { username, email, phone_number } = req.body;
-  const user = await userModel.findOne({ email: email });
+  const user = await userModel.findOne({
+    $or: [{ email: email }, { phone_number: phone_number }],
+  });
 
   if (user) {
     res.send({

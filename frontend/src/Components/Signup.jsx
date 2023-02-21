@@ -61,7 +61,13 @@ export const Signup = () => {
     );
 
     if (!res) {
-      alert("Razorpay SDK failed to load. Are you online?");
+      toast({
+        title: "Razorpay SDK failed to load. Are you online ?",
+        status: "error",
+        duration: 2000,
+        isClosable: true,
+        position: "top",
+      });
       return;
     }
 
@@ -74,10 +80,7 @@ export const Signup = () => {
     }).then((res) => res.json());
 
     const options = {
-      // key: "rzp_test_sQ3azqtorW8osX",
-
-      key: "rzp_test_jBBhchWsQ7daLQ",
-
+      key: "rzp_test_sQ3azqtorW8osX",
       currency: fdata.currency,
       amount: fdata.amount,
       order_id: fdata.id,
@@ -147,7 +150,6 @@ export const Signup = () => {
       await axios
         .post(CHECK_USER, data)
         .then((res) => {
-          console.log(res);
           if (res.data.status === "info") {
             toast({
               title: res.data.message,

@@ -2,11 +2,8 @@ const Razorpay = require("razorpay");
 const shortid = require("shortid");
 
 const razorpay = new Razorpay({
-  // key_id: "rzp_test_sQ3azqtorW8osX",
-  // key_secret: "UJRrFuI8gK4gAsTAT7fNxTpI",
-
-  key_id: "rzp_test_jBBhchWsQ7daLQ",
-  key_secret: "gGMguqm9lR9ISCsKak8HrevA",
+  key_id: "rzp_test_sQ3azqtorW8osX",
+  key_secret: "UJRrFuI8gK4gAsTAT7fNxTpI",
 });
 
 const razorPay = async (req, res) => {
